@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Container } from "./style";
 import { Button } from "../Button";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useAuth } from "../../contexts/hooks/useAuth";
 
 type InputTypes = {
   email: string;
@@ -17,9 +18,12 @@ export function FormLogin() {
     reset,
   } = useForm<InputTypes>();
 
-  const onSubmit: SubmitHandler<InputTypes> = (data) => {
-    console.log(data);
-    reset()
+  const { signIn } = useAuth();
+
+  const onSubmit: SubmitHandler<InputTypes> = async ({ email, password }) => {
+    const userLogged = await signIn({ email, password });
+    if (userLogged) 
+    reset();
   };
 
   return (
@@ -33,12 +37,13 @@ export function FormLogin() {
             <input
               type="email"
               placeholder="exemplo@email.com"
-              {...register("email", { required: "campo obrigatório",
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "Endereço de e-mail inválido",
-              },
-               })}
+              {...register("email", {
+                required: "campo obrigatório",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Endereço de e-mail inválido",
+                },
+              })}
             />
           </label>
           <span className="inputError">{errors.email?.message}</span>
@@ -47,10 +52,11 @@ export function FormLogin() {
         <section>
           <label>
             Senha:
-            <input type="password" placeholder="mínimo de 7 carácters"     
-              {...register("password", { required: "campo obrigatório",
-              
-               })}/>
+            <input
+              type="password"
+              placeholder="mínimo de 7 carácters"
+              {...register("password", { required: "campo obrigatório" })}
+            />
           </label>
           <span className="inputError">{errors.password?.message}</span>
         </section>
