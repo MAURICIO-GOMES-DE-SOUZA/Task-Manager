@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Container } from "./style";
 import { Button } from "../Button";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useAuth } from "../../contexts/hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 type InputTypes = {
   email: string;
@@ -22,8 +22,7 @@ export function FormLogin() {
 
   const onSubmit: SubmitHandler<InputTypes> = async ({ email, password }) => {
     const userLogged = await signIn({ email, password });
-    if (userLogged) 
-    reset();
+    if (userLogged) reset();
   };
 
   return (

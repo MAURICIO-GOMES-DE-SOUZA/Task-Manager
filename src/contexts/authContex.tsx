@@ -14,12 +14,12 @@ export const AuthContext = createContext({} as AuthContextTypes);
 
 export function AuthProvider({ children }: PropsWithChildren) {
   async function signIn({ email, password }: SignInTypes) {
-    if (!email || password) throw alert("Por favor informar email e senha")
+    if (!email || !password) throw alert("Por favor informar email e senha");
 
     return API.post("/login", { email, password })
       .then((res) => {
-        console.log({userID: res.data.id});
-        return true
+        console.log({ userID: res.data.id });
+        return true;
       })
       .catch((error) => {
         if (error.response) {
