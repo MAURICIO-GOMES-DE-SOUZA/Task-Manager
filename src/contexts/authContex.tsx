@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, useState } from "react";
+import { PropsWithChildren, createContext, useEffect, useState } from "react";
 import { API } from "../configs/api";
 
 export type SignInTypes = {
@@ -16,13 +16,15 @@ type AuthContextTypes = {
   signIn: (params: SignInTypes) => Promise<boolean | void>;
   signUp: (params: SignUpTypes) => Promise<boolean | void>;
   isLoading: boolean;
-  signOut: () => void
+  signOut: () => void;
+  authUserID: string;
 };
 
 export const AuthContext = createContext({} as AuthContextTypes);
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [isLoading, setIsoLoading] = useState(false);
+  const [authUserID, setAuthUserID] = useState("");
 
   async function signIn({ email, password }: SignInTypes) {
     if (!email || !password) throw alert("Por favor informar email e senha");
@@ -31,8 +33,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     return API.post("/login", { email, password })
       .then((res) => {
-        const userID = { userID: res.data.id };
-        localStorage.setItem("@task_manager:user", JSON.stringify(userID));
+        const userID = res.data.id;
+
+        setAuthUserID(userID);
+        localStorage.setItem("@task_manager:userID", JSON.stringify(userID));
 
         return true;
       })
@@ -51,14 +55,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }
 
   function signOut() {
-    localStorage.removeItem("@task_manager:user")
+    localStorage.removeItem("@task_manager:userID");
+    setAuthUserID("")
     // remove Cookie
   }
 
-
-
   async function signUp({ name, email, password }: SignUpTypes) {
-    if ((!name || !email || !password))
+    if (!name || !email || !password)
       throw alert("Por favor informar nome, email e senha");
 
     setIsoLoading(true);
@@ -82,8 +85,18 @@ export function AuthProvider({ children }: PropsWithChildren) {
       });
   }
 
+  useEffect(() => {
+    const userID = localStorage.getItem("@task_manager:userID");
+    if (userID) {
+      //get user api
+      setAuthUserID(userID);
+    }
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ signIn, isLoading, signUp, signOut }}>
+    <AuthContext.Provider
+      value={{ signIn, isLoading, signUp, signOut, authUserID }}
+    >
       {children}
     </AuthContext.Provider>
   );
