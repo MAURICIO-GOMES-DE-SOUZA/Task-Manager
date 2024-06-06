@@ -56,8 +56,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   function signOut() {
     localStorage.removeItem("@task_manager:userID");
-    setAuthUserID("")
-    // remove Cookie
+    setAuthUserID("");
+    API.post("/logout").catch((error) => {
+      console.log(error);
+    });
   }
 
   async function signUp({ name, email, password }: SignUpTypes) {
@@ -88,8 +90,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     const userID = localStorage.getItem("@task_manager:userID");
     if (userID) {
-      //get user api
-      setAuthUserID(userID);
+      const id = JSON.parse(userID);
+
+      API.get("/user")
+        .then((res) => {
+          if (id == res.data.id) setAuthUserID(userID);
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response?.status == 401) signOut();
+        });
     }
   }, []);
 
