@@ -1,16 +1,17 @@
 import styled from "styled-components";
 
 export const Container = styled.li`
-  width: 100%;
- gap: 0.8rem 1.8rem;
+  display: flex;
+  gap: 0.8rem;
+  padding: 0.8rem 1.8rem;
 
-  &:hover{
+  &:hover {
+    cursor: pointer;
     background: ${({ theme }) => theme.colors.PRIMARY700}44;
-  cursor: pointer;
   }
 
-  i{
-    color: ${({theme}) => theme.colors.LIGHT400}44;
+  i {
+    color: ${({ theme }) => theme.colors.LIGHT400};
     font-size: 1.8rem;
-  }`
- 
+  }
+`;
