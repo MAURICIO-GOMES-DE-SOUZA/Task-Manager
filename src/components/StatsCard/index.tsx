@@ -8,12 +8,13 @@ type StatsCardProps = {
   variant?: CardStyleType;
   onClick?: () => void;
 };
+
 export function StatsCard({
   title,
   icon,
   number,
-  total,
   variant = "neutral",
+  total,
   onClick,
 }: StatsCardProps) {
   const percentage = number && total ? (number / total) * 100 : 0;

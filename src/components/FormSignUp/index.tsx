@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Container } from "./style";
+import { Container } from "./styles";
 import { Button } from "../Button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useAuth } from "../../hooks/useAuth";
@@ -41,7 +41,9 @@ export function FormSignUp() {
             <input
               type="text"
               placeholder="digite seu nome"
-              {...register("name", { required: "campo obrigatório" })}
+              {...register("name", {
+                required: "campo obrigatório",
+              })}
             />
           </label>
           <span className="inputError">{errors.name?.message}</span>
@@ -70,7 +72,7 @@ export function FormSignUp() {
             Senha:
             <input
               type="password"
-              placeholder="mínimo de 7 carácters"
+              placeholder="digite sua senha"
               {...register("password", {
                 required: "campo obrigatório",
                 minLength: {
@@ -78,8 +80,7 @@ export function FormSignUp() {
                   message: "A senha deve ter no mínimo 7 dígitos",
                 },
                 pattern: {
-                  value:
-                    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}|:"<>?,./\\[\]-]).+$/,
+                  value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}|:"<>?,./\\[\]-]).+$/,
                   message:
                     "A senha deve ter número, letra maiúscula e caractere especial",
                 },
@@ -93,8 +94,9 @@ export function FormSignUp() {
       </form>
 
       <span className="messageChangePage">Já tem uma conta? </span>
+
       <button className="buttonChangePage" onClick={() => navigate("/")}>
-        Registre-se
+        Login
       </button>
     </Container>
   );

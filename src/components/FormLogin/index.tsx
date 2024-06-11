@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Container } from "./style";
+import { Container } from "./styles";
 import { Button } from "../Button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useAuth } from "../../hooks/useAuth";
@@ -53,17 +53,20 @@ export function FormLogin() {
             Senha:
             <input
               type="password"
-              placeholder="mínimo de 7 carácters"
-              {...register("password", { required: "campo obrigatório" })}
+              placeholder="digite sua senha"
+              {...register("password", {
+                required: "campo obrigatório",
+              })}
             />
           </label>
           <span className="inputError">{errors.password?.message}</span>
         </section>
 
-        <Button title="login" loading={isLoading} />
+        <Button title="Login" loading={isLoading} />
       </form>
 
       <span className="messageChangePage">Não tem uma conta? </span>
+
       <button className="buttonChangePage" onClick={() => navigate("/signup")}>
         Registre-se
       </button>

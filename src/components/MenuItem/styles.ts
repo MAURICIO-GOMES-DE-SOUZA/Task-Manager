@@ -6,8 +6,8 @@ export const Container = styled.li`
   padding: 0.8rem 1.8rem;
 
   &:hover {
-    cursor: pointer;
     background: ${({ theme }) => theme.colors.PRIMARY700}44;
+    cursor: pointer;
   }
 
   i {

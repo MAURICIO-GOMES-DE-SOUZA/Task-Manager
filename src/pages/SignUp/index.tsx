@@ -12,8 +12,7 @@ export function SignUp() {
 
       <div className="signInPart1">
         <div>
-          <h1>Task Manager</h1>
-          <Link to={"https://emauelquintino.github.io/Page-WDC"} target="blank">
+          <Link to={"https://emanuelquintino.github.io/Page-WDC"} target="_blank">
             <img src={logo} alt="" />
           </Link>
         </div>

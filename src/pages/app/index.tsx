@@ -13,9 +13,7 @@ export function App() {
         <section className="sideBar">
           <SideBar />
         </section>
-
-        <Outlet />
-        {/* main */}
+        <Outlet /> {/* main */}
       </article>
 
       <Footer />
