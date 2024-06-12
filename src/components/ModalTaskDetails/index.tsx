@@ -1,3 +1,4 @@
+import { FormMutationTask } from "../FormMutationTask";
 import { TaskDataTypes } from "../TaskCard";
 import { Container } from "./styles";
 
@@ -16,8 +17,7 @@ export function ModalTaskDetails({ toggleModal, task }: ModalTaskDetailsTypes) {
             <h2>Detalhes da tarefa</h2>
             <i className="material-icons closeIcon"onClick={toggleModal}>close</i>
           </div>
-          {task.title}
-          {/* form */}
+          <FormMutationTask  isUpdate={true} toggleModal={toggleModal} taskData={task}/>
         </div>
       </div>
     </Container>
