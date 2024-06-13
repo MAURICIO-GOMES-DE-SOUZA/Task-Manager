@@ -14,8 +14,13 @@ export function TaskCard({ data, onClick }: PropsTypes) {
 
   const taskStatus = isCompleted ? "completed" : isLate ? "late" : "pending";
 
+  function handleKeyUp(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key == "Enter") {
+      onClick();
+    }
+  }
   return (
-    <Container onClick={onClick}>
+    <Container onClick={onClick} tabIndex={0} onKeyUp={handleKeyUp}>
       <div className={`status ${taskStatus}`}>{taskStatus}</div>
 
       <div className="taskDetails">
