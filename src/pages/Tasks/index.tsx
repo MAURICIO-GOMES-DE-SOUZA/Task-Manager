@@ -1,37 +1,26 @@
 import { useState } from "react";
-import { Pagination } from "../../components/Pagination";
-import { TaskCard, TaskDataTypes } from "../../components/TaskCard";
-import { useQueryTasks } from "../../hooks/useQueryTasks";
-import { Container } from "./styles";
 import { ModalTaskDetails } from "../../components/ModalTaskDetails";
+import { Pagination } from "../../components/Pagination";
+import { TaskCard } from "../../components/TaskCard";
+import { useQueryTasks } from "../../hooks/useQueryTasks";
+import { Container } from "./style";
+import { TaskDataTypes } from "../../@types/tasks";
+import { useTask } from "../../hooks/useTask";
 
 export function Tasks() {
-  const [showModal, setShowModal] = useState(false)
-  const [taskDetails, setTaskDetails] = useState({} as TaskDataTypes)
+  const [showModalTaskDetails, setShowModalTaskDetails] = useState(false);
+  const { setTaskData } = useTask();
+
+  const { data, isLoading, error, changeLimit, page, totalPages, prevPage, nextPage } =
+    useQueryTasks();
 
   function toggleModal() {
-    setShowModal((prevValue) => (prevValue == true ? false : true))
+    setShowModalTaskDetails((prevState) => (prevState == true ? false : true));
   }
 
-  function addTaskDetails(task: TaskDataTypes) {
-    setTaskDetails(task)
-    toggleModal()
-  }
-  
-  const {
-    data,
-    page,
-    changeLimit,
-    changePage,
-    nextPage,
-    prevPage,
-    totalPages,
-    isLoading,
-    error,
-  } = useQueryTasks();
-
-  if (totalPages > 0 && page > totalPages) {
-    changePage(totalPages);
+  function addTaskToggleModal(task: TaskDataTypes) {
+    toggleModal();
+    setTaskData(task);
   }
 
   return (
@@ -43,24 +32,30 @@ export function Tasks() {
           <Pagination
             page={page}
             step={5}
-            changeLimit={changeLimit}
-            nextPage={nextPage}
-            prevPage={prevPage}
             totalPages={totalPages}
+            prevPage={prevPage}
+            nextPage={nextPage}
+            changeLimit={changeLimit}
           />
         </div>
       </div>
 
       {isLoading && <span className="loading">Carregando...</span>}
-      {!isLoading && error && <span className="loading">Erro...</span>}
+      {!isLoading && error && <span className="queryError">Erro!</span>}
 
-      <div className="tasksContainer">
+      <div className="tasksContainer scrollBar">
         {data?.length == 0 ? (
           <p className="loading">Sem tarefas para mostrar</p>
         ) : (
           data?.map((task) => {
-            return (<TaskCard data={task} key={task.id} onClick={() => addTaskDetails(task)} />
-          )})
+            return (
+              <TaskCard
+                data={task}
+                key={task.id}
+                onClick={() => addTaskToggleModal(task)}
+              />
+            );
+          })
         )}
       </div>
 
@@ -68,13 +63,14 @@ export function Tasks() {
         <Pagination
           page={page}
           step={5}
-          changeLimit={changeLimit}
-          nextPage={nextPage}
-          prevPage={prevPage}
           totalPages={totalPages}
+          prevPage={prevPage}
+          nextPage={nextPage}
+          changeLimit={changeLimit}
         />
       </div>
-      {showModal && <ModalTaskDetails task={taskDetails} toggleModal={toggleModal} />}
+
+      {showModalTaskDetails && <ModalTaskDetails toggleModal={toggleModal} />}
     </Container>
   );
 }

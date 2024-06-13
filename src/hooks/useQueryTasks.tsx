@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { API } from "../configs/api";
 import { useEffect, useState } from "react";
-import { TaskDataTypes } from "../components/TaskCard";
+import { TaskDataTypes } from "../@types/tasks";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { UserDataTypes } from "../@types/user";
 
 type FilterType = "all" | "completed" | "pending" | "late";
 
@@ -14,7 +15,7 @@ export function useQueryTasks() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const searchparams = useSearchParams();
+  const searchParams = useSearchParams();
 
   async function getTasks({ page = 1, limit = 10, filter = "all" }) {
     if (page <= 0) page = 1;
@@ -30,26 +31,26 @@ export function useQueryTasks() {
   }
 
   async function changeTotalPages(filter = "all", limit: number) {
-    const { data } = await API.get("user");
+    const { data } = await API.get("/user");
+    const { tasksInfo } = data as UserDataTypes;
 
     let total;
-
     switch (filter) {
       case "all":
-        total = data.tasksInfo.total;
+        total = tasksInfo.total;
         break;
       case "completed":
-        total = data.tasksInfo.completed;
+        total = tasksInfo.completed;
         break;
       case "pending":
-        total = data.tasksInfo.pending;
+        total = tasksInfo.pending;
         break;
       case "late":
-        total = data.tasksInfo.late;
+        total = tasksInfo.late;
         break;
 
       default:
-        total = data.tasksInfo.total;
+        total = tasksInfo.total;
         break;
     }
 
@@ -59,15 +60,15 @@ export function useQueryTasks() {
 
   function nextPage() {
     if (page < totalPages) {
-      setPage((prevValue) => prevValue + 1);
-      navigate(`?filter=${filter}&page${page + 1}`);
+      setPage((prevPage) => prevPage + 1);
+      navigate(`?filter=${filter}&page=${page + 1}`);
     }
   }
 
   function prevPage() {
     if (page > 1) {
-      setPage((prevValue) => prevValue - 1);
-      navigate(`?filter=${filter}&page${page - 1}`);
+      setPage((prevPage) => prevPage - 1);
+      navigate(`?filter=${filter}&page=${page - 1}`);
     }
   }
 
@@ -85,33 +86,39 @@ export function useQueryTasks() {
 
   useEffect(() => {
     if (location.pathname != "/tasks") return;
-    const pageQuery = Number(searchparams[0].get("page"));
-    const filterQuery = searchparams[0].get("filter") as FilterType;
+
+    const pageQuery = Number(searchParams[0].get("page"));
+    const filterQuery = searchParams[0].get("filter") as FilterType;
+
     setPage(pageQuery || 1);
     setFilter(filterQuery || "all");
 
     if (totalPages > 0) {
       if (pageQuery > totalPages) {
+        navigate(`?filter=${filterQuery}&page=${totalPages}`);
         setPage(totalPages);
-        navigate(`?filter=${filterQuery}&page${totalPages}`);
         return;
       }
 
-      if (pageQuery > 1) {
-        setPage(1);
+      if (pageQuery < 1) {
         navigate(`?filter=${filterQuery}&page=1`);
+        setPage(1);
         return;
       }
     }
-  }, [page, totalPages, searchparams, navigate, location]);
+  }, [page, totalPages, searchParams, navigate, location]);
 
   const query = useQuery({
     queryKey: ["tasksData", page, limit, filter],
     queryFn: () => getTasks({ page, limit, filter }),
   });
+
+  const refetchQueryTask = async () => await query.refetch();
+
   return {
     ...query,
-    data: query?.data,
+    data: query.data,
+    refetchQueryTask,
     page,
     totalPages,
     nextPage,

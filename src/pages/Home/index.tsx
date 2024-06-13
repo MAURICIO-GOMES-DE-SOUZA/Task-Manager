@@ -1,11 +1,10 @@
 import { NavLink } from "react-router-dom";
-import { useQueryUser } from "../../hooks/useQueryUser";
-import { Container } from "./styles";
 import { StatsCard } from "../../components/StatsCard";
+import { useQueryUser } from "../../hooks/useQueryUser";
+import { Container } from "./style";
 
 export function Home() {
   const { data } = useQueryUser();
-  console.log(data);
 
   return (
     <Container>
@@ -43,7 +42,12 @@ export function Home() {
         </NavLink>
 
         <NavLink to={"/tasks?filter=all&page=1"}>
-          <StatsCard title="Total" icon="query_stats" number={data?.tasksInfo.total} />
+          <StatsCard
+            title="Total"
+            icon="query_stats"
+            variant="neutral"
+            number={data?.tasksInfo.total}
+          />
         </NavLink>
       </div>
     </Container>
